@@ -108,15 +108,11 @@ public class main2 {
 
         String[] a = {"a"};
         String[] b = {"b"};
-        System.out.println(Arrays.toString(getAllCombinations(a, b)));
 
         String str = "all tanks in london bridge are ordered to go to london bridge";
         cyk(str);
-        System.out.println(equivalents.get(str));
-        System.out.println("END");
-        System.out.println(equivalents);
         System.out.println(equivalents.containsKey(str));
-        System.out.println(isGrammaticallyValid(str));
+
 
     }
 
@@ -145,36 +141,11 @@ public class main2 {
             groups = getWordGroups(i+1, words.toArray(new String[0]));
             for (int j = 0; j < groups.length; j++) {
                 currentGroup = groups[j];
-                System.out.println("current group: " + Arrays.toString(currentGroup));
-                if (currentGroup.length == 1) {
-                    //dont really need this
-                } else if (currentGroup.length == 2){
-                    split = splitAt(1, currentGroup);
-                    System.out.println(split[0][0] + " --- " + split[1][0]);
-                    System.out.println(equivalents.containsKey(split[0][0]) + " --- " + equivalents.containsKey(split[1][0]));
-                    if (equivalents.containsKey(split[0][0]) && equivalents.containsKey(split[1][0])) {
-                        combinations = getAllCombinations(equivalents.get(split[0][0]).toArray(new String[0]), equivalents.get(split[1][0]).toArray(new String[0]));
-                        for (String n : combinations) {
-                            if (isGrammaticallyValid(n)) {
-                                if (!equivalents.containsKey(merge(currentGroup))) {
-                                    ArrayList<String> temp = new ArrayList<>(equivalents.get(n));
-                                    equivalents.put(merge(currentGroup), temp);
-                                } else {
-                                    equivalents.get(merge(currentGroup)).addAll(equivalents.get(n));
-                                }
-                            }
-                        }
-                    }
-                } else {
+                if (currentGroup.length != 1) {
                     for (int l = 0; l < currentGroup.length - 1; l++) {
                         split = splitAt(l + 1, currentGroup);
-                        System.out.println(merge(split[0]) + " --- " + merge(split[1]));
-                        System.out.println(equivalents.containsKey(merge(split[0])) + " --- " + equivalents.containsKey(merge(split[1])));
-                        System.out.println(equivalents.get(merge(split[0])) + " --- " + equivalents.get(merge(split[1])));
                         if (equivalents.containsKey(merge(split[0])) && equivalents.containsKey(merge(split[1]))) {
-                            System.out.println("MERHABA");
                             combinations = getAllCombinations(equivalents.get(merge(split[0])).toArray(new String[0]), equivalents.get(merge(split[1])).toArray(new String[0]));
-                            System.out.println("ohaaaa: " + Arrays.toString(combinations));
                             for (String n : combinations) {
                                 if (isGrammaticallyValid(n)) {
                                     if (!equivalents.containsKey(merge(currentGroup))) {
@@ -200,12 +171,6 @@ public class main2 {
         for (String i : words)
             concat.append(i).append(" ");
         return concat.toString().trim();
-    }
-
-    //TODO: incomplete
-    static boolean isGrammaticallyValid(String[] words) {
-        merge(words);
-        return isGrammaticallyValid(merge(words));
     }
 
     //TODO: incomplete
