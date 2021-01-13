@@ -1,0 +1,56 @@
+<S0> -> <M1><M2>|<S1><F1>|<F5><F3>|<F4><F3>|<S2><F1>|<F7><F2>|<F6><F2>|<F10><F9>
+<S1> -> <M1><M2>|<S1><F1>
+<M1> -> <F11><encounter-verb>
+<M2> -> <prep><time-or-place>
+<S2> -> <F5><F3>|<F4><F3>|<S2><F1>
+<S3> -> <F7><F2>|<F6><F2>
+<R0> -> <F10><F9>
+<F1> -> <comma><R0>
+<F2> -> <prep><place>
+<F3> -> <Verb1><result>
+<F4> -> <w1><F2>
+<F5> -> <Article><F4>
+<F6> -> <H1><H2>
+<F7> -> <Article><F6>
+<F8> -> <amount><unit>
+<F9> -> <H3><G7>
+<F10> -> <F8><F2>
+<F11> -> <side><unit>
+<G1> -> <agreement><w2>
+<G2> -> <compromise><w3>
+<G3> -> <nation><w4>
+<G4> -> <nation><w5>
+<G5> -> <Verb1><order>
+<G6> -> <w8><movement>
+<G7> -> <w8><place>
+<H1> -> <G1><G2>
+<H2> -> <G3><G4>
+<H3> -> <G5><G6>
+<w5> -> <J1><w7>
+<J1> -> <w6><Article>
+<comma> -> ,
+<w1> -> battle
+<w2> -> has been
+<w3> -> between
+<w4> -> and
+<w6> -> for
+<w7> -> engagement
+<w8> -> to
+<Verb1> -> is|are
+<Article> -> a|the
+<prep> -> in|on|at
+<time-or-place> -> morning|noon|afternoon|night|midnight|london bridge|big ben|london eye|oxford street|eastern front|western front
+<place> -> london bridge|big ben|london eye|oxford street|eastern front|western front
+<side> -> enemy|elly|neutral
+<unit> -> personnel|tanks|aircrafts|
+<encounter-verb> -> spotted|seen|destroyed|eliminated
+<time> -> morning|noon|afternoon|night|midnight
+<front> -> eastern front|western front
+<land> -> london bridge|big ben|london eye|oxford street
+<result> -> victorious|lost|inconclusive
+<amount> -> all|10|50|100|200|1000
+<order> -> advised|ordered
+<movement> -> retreat|move|go|deploy|reposition
+<agreement> -> truce|parley|ceasefire
+<compromise> -> agreed|signed|made
+<nation> -> britain|germany|italy|france|spain

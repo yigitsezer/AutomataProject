@@ -5,16 +5,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class main {
-
-    static ArrayList<String> terminals = new ArrayList<>();
+	static ArrayList<String> terminals = new ArrayList<>();
     static ArrayList<String> nonTerminals = new ArrayList<>();
     static HashMap<String, ArrayList<String>> grammarMap = new HashMap<>();
     static HashMap<String, ArrayList<String>> equivalents = new HashMap<>();
-    static HashMap<String, Boolean> validity = new HashMap<>();
-
-
+    
     public static void main(String[] args) {
-        String grammar = "<S0> -> <M1><M2>|<S1><F1>|<F5><F3>|<F4><F3>|<S2><F1>|<F7><F2>|<F6><F2>|<F10><F9>\n" +
+    	
+    	String grammar = "<S0> -> <M1><M2>|<S1><F1>|<F5><F3>|<F4><F3>|<S2><F1>|<F7><F2>|<F6><F2>|<F10><F9>\n" +
                 "<S1> -> <M1><M2>|<S1><F1>\n" +
                 "<M1> -> <F11><encounter-verb>\n" +
                 "<M2> -> <prep><time-or-place>\n" +
@@ -71,8 +69,73 @@ public class main {
                 "<compromise> -> agreed|signed|made\n" +
                 "<nation> -> britain|germany|italy|france|spain";
 
-        String s = "";
+        String str2 = "enemy personnel spotted in morning";
+        String str3 = "the battle at london bridge is victorious, all personnel at london bridge are ordered to reposition to oxford street, 200 tanks at london bridge are ordered to reposition to big ben";
+        
+        System.out.println(checkGrammar(grammar,str3));
+    }
+    
+    static boolean checkGrammar(String grammar, String str) {
+    	buildGrammar(grammar);
+    	boolean isValid = cyk(str.toLowerCase());
+        System.out.println(str.toLowerCase());
+        System.out.println(equivalents.get(merge(getWords(str).toArray(new String[0]))));
+        
+        return isValid;
+    }
 
+    static boolean cyk(String str) {
+        ArrayList<String> words = getWords(str);
+        String[][] groups;
+        String[][] split;
+        String[] currentGroup;
+        
+        for (int i = 0; i < words.size(); i++) {
+            groups = getWordGroups(i+1, words.toArray(new String[0]));
+            for (int j = 0; j < groups.length; j++) {
+                currentGroup = groups[j]; // [0]-> baa [1] -> aab [2] -> aba if string=baaba
+                ArrayList<String> temp = new ArrayList<String>();
+                if(groups[j].length >1) {
+                	for (int j2 = 1; j2 < currentGroup.length; j2++) {
+                		ArrayList<String>[] cartesianParts = new ArrayList[2];
+                		split = splitAt(j2,groups[j]);
+                		
+                		for (int j3 = 0; j3 < 2; j3++)
+                			isGrammaticallyValid(split[j3]);
+                		
+                		cartesianParts[0] = new ArrayList<String>();
+                		cartesianParts[1] = new ArrayList<String>();
+                		for (int k = 0; k < 2; k++) {
+                			String str1 = merge(split[k]);
+							if(equivalents.containsKey(str1) || grammarMap.containsKey(str1)) 
+									cartesianParts[k].addAll(equivalents.get(str1));
+                		}
+                		
+                		//Cartesian Product
+            			String[] temp1 = cartesianParts[0].toArray(new String[cartesianParts[0].size()]);
+                		String[] temp2 = cartesianParts[1].toArray(new String[cartesianParts[1].size()]);
+                		String[] cartesianProducts = getAllCombinations(temp1,temp2);
+                		
+                		for (int k = 0; k < cartesianProducts.length; k++) { 
+                			if(grammarMap.containsKey(cartesianProducts[k]) && !temp.contains(cartesianProducts[k])) { 
+            					for (String string : grammarMap.get(cartesianProducts[k]))
+            						if(!temp.contains(string))
+            							temp.add(string);
+                				equivalents.put(merge(currentGroup), temp);
+                			}
+                		}
+                	}
+                }
+                else
+                	isGrammaticallyValid(groups[j]);
+            }
+        }
+        return equivalents.containsKey(merge(words.toArray(new String[0])));
+    }
+
+    static void buildGrammar(String grammar) {
+    	
+    	String s = "";
         Pattern p = Pattern.compile("<.+?>");
         Matcher m = p.matcher(grammar);
         while (m.find()) {
@@ -97,103 +160,46 @@ public class main {
                     ArrayList<String> arrList = new ArrayList<>();
                     arrList.add(arr[0]);
                     grammarMap.put(j, arrList);
-                } else {
+                } else 
                     grammarMap.get(j).add(arr[0]);
-                }
         }
-
-        System.out.println(grammarMap.get("morning"));
-
-        String[] a = {"ak", "b", "c", "d", "e"};
-        String[] b = {"f5", "j3"};
-        System.out.println("CARTESIAN PRODUCTS: " + Arrays.toString(getAllCombinations(a, b)));
-        System.out.println("GROUPS OF 2: " + Arrays.deepToString(getWordGroups(2, a)));
-        System.out.println("SPLITTED AT 2: " + Arrays.toString(splitAt(1, a)[0]) + " AND " + Arrays.toString(splitAt(2, a)[1]));
-
-        System.out.println(grammarMap.get("<S2><F1>"));
-
-        //isGrammaticallyValid("morning");
-        System.out.println(equivalents);
-
-
-
-
-
-        //isGrammaticallyValid("morning");
-
-        //cyk("enemy personal, spotted in morning");
-
-
     }
-
-    //TODO: incomplete
-    static boolean cyk(String str) {
-        ArrayList<String> words = new ArrayList<>();
-        Pattern p = Pattern.compile("(\\b[a-zA-Z0-9]+\\b|,)");
-        Matcher m = p.matcher(str);
-        while (m.find()) {
-            words.add(m.group());
-        }
-        boolean[][] table = new boolean[words.size()][];
-        for (int i = 0; i < table.length; i++) {
-            table[i] = new boolean[table.length - i];
-        }
-
-        String[][] groups;
-        String[][] split = new String[2][];
-        String[] currentGroup;
-
-        for (int i = 0; i < words.size(); i++) {
-            groups = getWordGroups(i+1, words.toArray(new String[0]));
-            for (int j = 0; j < groups.length; j++) {
-                currentGroup = groups[j];
-                for (int k = 0; k < currentGroup.length; k++) {
-                    System.out.println(Arrays.toString(groups[j]));
-                    System.out.println(isGrammaticallyValid(groups[j]));
-                }
-            }
-        }
-
-
-        return false;
-    }
-
-    //TODO: incomplete
+    
     static boolean isGrammaticallyValid(String[] words) {
+        return isGrammaticallyValid(merge(words));
+    }
+    
+    static String merge(String[] words) {
         StringBuilder concat = new StringBuilder();
         for (String i : words)
-            concat.append(i);
-        return isGrammaticallyValid(concat.toString());
+            concat.append(i).append(" ");
+        return concat.toString().trim();
     }
 
-    //TODO: incomplete
     static boolean isGrammaticallyValid(String str) {
         ArrayList<String> temp;
         if (grammarMap.containsKey(str) && !equivalents.containsKey(str)) {
             temp = new ArrayList<>();
-            for (String i : grammarMap.get(str)) {
+            for (String i : grammarMap.get(str))
                 temp.add(i);
-            }
             equivalents.put(str, temp);
             return true;
-        } else if (equivalents.containsKey(str)) {
+        } else if (equivalents.containsKey(str))
             return true;
-        } else {
-            return false;
-        }
-    }
-
-    /*
-    static boolean isValid(String str) {
-        if (validity.containsKey(str))
-            return validity.get(str);
-        else if (equivalents.containsKey(str))
-            return isValid(equivalents.get(str));
         else
             return false;
     }
-     */
 
+    static ArrayList<String> getWords(String str) {
+    	ArrayList<String> words = new ArrayList<>();
+        Pattern p = Pattern.compile("(\\b[a-zA-Z0-9]+\\b|[,.:;%?])");
+        Matcher m = p.matcher(str);
+        while (m.find()) {
+            words.add(m.group());
+        }    
+        return words;
+    }
+    
     static String[][] getWordGroups(int groupLength, String[] words) {
         String[][] groups = new String[words.length - groupLength + 1][groupLength];
         int start = 0;
@@ -226,23 +232,9 @@ public class main {
         if(length == 0){ return combinations; };
         for(int i = 0; i < from.length; i++){
             for(int j = 0; j < to.length; j++){
-                combinations[counter] = from[i] + to[j];
-                counter++;
+                combinations[counter++] = from[i] + to[j];
             }
         }
         return combinations;
     }
-
-    /*
-    static String[] getCombinations(ArrayList<String> words) {
-        ArrayList[][] combinations = new ArrayList[words.size() - 1][2];
-        for (int i = 0; i < combinations.length; i++) {
-            for (int j = 0; j < 5; j++) {
-                combinations[i][0] = words.subList(0,j).toArray(new String[0]);
-                combinations[i][1] = words.subList(j+1, words.size()).toArray(new String[0]);
-            }
-        }
-        return combinations;
-    }
-     */
 }
