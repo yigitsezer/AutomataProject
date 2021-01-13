@@ -101,15 +101,10 @@ public class main2 {
                     grammarMap.get(j).add(arr[0]);
                 }
         }
+        equivalents.putAll(grammarMap);
 
-        for (String i : terminals) {
-            equivalents.put(i, grammarMap.get(i));
-        }
-
-        String str = "all tanks in london bridge are ordered to go to london bridge";
+        String str = "the battle at london bridge is victorious, all personnel at london bridge are ordered to reposition to oxford street , 200 tanks at london bridge are ordered to reposition to big ben";
         System.out.println(cyk(str));
-
-
     }
 
     static boolean cyk(String str) {
@@ -139,7 +134,11 @@ public class main2 {
                                     ArrayList<String> temp = new ArrayList<>(equivalents.get(n));
                                     equivalents.put(merge(currentGroup), temp);
                                 } else {
-                                    equivalents.get(merge(currentGroup)).addAll(equivalents.get(n));
+                                    for (String k:equivalents.get(n)) {
+                                        if (!equivalents.get(merge(currentGroup)).contains(k)) {
+                                            equivalents.get(merge(currentGroup)).add(k);
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -147,7 +146,7 @@ public class main2 {
                 }
             }
         }
-        return equivalents.containsKey(str);
+        return equivalents.containsKey(merge(words.toArray(new String[0])));
     }
 
     static String merge(String[] words) {
@@ -164,13 +163,12 @@ public class main2 {
             equivalents.put(str, temp);
             return true;
         } else if (equivalents.containsKey(str)) {
-            for (String i : equivalents.get(str)) {
-                if (isGrammaticallyValid(i)) {
-                    if (!equivalents.containsKey(i)) {
-                        equivalents.get(str).addAll(equivalents.get(i));
-                    }
-                }
-            }
+            for (String i : equivalents.get(str))
+                if (isGrammaticallyValid(i))
+                    if (!equivalents.containsKey(i))
+                        for (String j:equivalents.get(i))
+                            if (!equivalents.get(i).contains(j))
+                                equivalents.get(i).add(j);
             return true;
         } else {
             return false;
@@ -214,5 +212,18 @@ public class main2 {
             }
         }
         return combinations;
+    }
+
+    static String[] concat(String[] a, String[] b) {
+        String[] concat = new String[a.length + b.length];
+        int endPoint = 0;
+        for (int i = 0; i < a.length; i++) {
+            concat[i] = a[i];
+            endPoint = i;
+        }
+        for (int i = 0; i < b.length; i++) {
+            concat[i + endPoint] = b[i];
+        }
+        return concat;
     }
 }
