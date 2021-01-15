@@ -1,6 +1,8 @@
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,6 +12,7 @@ public class main2 {
     static ArrayList<String> nonTerminals = new ArrayList<>();
     static HashMap<String, ArrayList<String>> grammarMap = new HashMap<>();
     static HashMap<String, ArrayList<String>> equivalents = new HashMap<>();
+    static HashMap<String, ArrayList<String>> productionRules = new HashMap<>();
 
 
     public static void main(String[] args) {
@@ -105,6 +108,30 @@ public class main2 {
 
         String str = "the battle at london bridge is victorious, all personnel at london bridge are ordered to reposition to oxford street , 200 tanks at london bridge are ordered to reposition to big ben";
         System.out.println(cyk(str));
+
+
+        for (String i : grammar.split("\n")) {
+            String[] arr = i.split(" -> ");
+            productionRules.put(arr[0], new ArrayList<>(Arrays.asList(arr[1].trim().split("\\|"))));
+        }
+        for (int i = 0; i < 100; i++) {
+            System.out.println(getBottom("<S0>").replaceAll(" +", " "));
+        }
+    }
+
+    static String getBottom(String start) {
+        Random random = new Random();
+        if (start.contains("<")) {
+            ArrayList<String> temp = productionRules.get(start);
+            String production = temp.get(random.nextInt(temp.size()));
+            StringBuilder stringBuilder = new StringBuilder();
+            for (String i : production.split(" ")) {
+                stringBuilder.append(getBottom(i)).append(" ");
+            }
+            return stringBuilder.toString();
+        } else {
+            return start;
+        }
     }
 
     static boolean cyk(String str) {
