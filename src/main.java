@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,13 +26,15 @@ public class main {
         String str2 = "enemy personnel spotted in morning";
         String str3 = "the battle at london bridge is victorious, all personnel at london bridge are ordered to reposition to oxford street, 200 tanks at london bridge are ordered to reposition to big ben, 200 tanks at london bridge are ordered to reposition to big ben";
         
-        String grammar = readGrammar("grammar.txt");
+        String grammar = readGrammar("example-grammar3.txt");
         buildGrammar(grammar);
         /*
         System.out.println(cyk(str12));
         System.out.println(str12.toLowerCase());
         System.out.println(equivalents.get(merge(getWords(str12).toArray(new String[0]))));  */ 
         getValidSentences(grammar,5);
+        
+        getInvalidSentences(5);
  
     }   
    
@@ -53,6 +56,27 @@ public class main {
         	System.err.println("IOException: " + ioe.getMessage());
         }
     }
+    
+    private static void getInvalidSentences(int numberOfSentences) {
+    	Random random = new Random();
+    	try{
+			List<String> lines = Files.readAllLines(Paths.get("example-sentences.txt"), StandardCharsets.UTF_8);
+			for (int i = 0; i < numberOfSentences; i++) {
+	    		int numberOfWords =random.ints(terminals.size()/4, terminals.size()).findFirst().getAsInt();
+	    		StringBuilder stringBuilder = new StringBuilder();
+	    		for (int j = 0; j < numberOfWords ; j++) {
+					stringBuilder.append(terminals.get(random.nextInt(terminals.size()))).append(" ");
+				}
+	    		lines.add(random.nextInt(lines.size()), stringBuilder.toString().trim());
+			}
+			Files.write(Paths.get("input.txt"), lines, StandardCharsets.UTF_8);
+		}
+		catch(IOException ioe) {
+			System.err.println("IOException: " + ioe.getMessage());
+		}
+    }
+    
+    
     
     private static String getBottom(String start) {
         Random random = new Random();
