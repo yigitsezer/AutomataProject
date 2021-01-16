@@ -21,24 +21,57 @@ public class main {
     
     
     public static void main(String[] args) {
-    	
-    	String str12 = "I saw the man with the telescope";
-        String str2 = "enemy personnel spotted in morning";
-        String str3 = "the battle at london bridge is victorious, all personnel at london bridge are ordered to reposition to oxford street, 200 tanks at london bridge are ordered to reposition to big ben, 200 tanks at london bridge are ordered to reposition to big ben";
-        
-        String grammar = readGrammar("example-grammar3.txt");
+        String grammar = readFile("grammar.txt");
         buildGrammar(grammar);
-        /*
-        System.out.println(cyk(str12));
-        System.out.println(str12.toLowerCase());
-        System.out.println(equivalents.get(merge(getWords(str12).toArray(new String[0]))));  */ 
-        getValidSentences(grammar,5);
+        getValidSentences(grammar,5,"example-sentences.txt");
+        addInvalidSentences(5,"example-sentences.txt","valid&invalid.txt");
+        encryptInput("valid&invalid.txt","input.txt");
+        decryptInput("input.txt","intermediate.txt");
+        validateSentences("intermediate.txt","decrypted.txt");
+    }
+    
+    private static void validateSentences(String inputFilename, String outputFilename) {
+    	String input = readFile(inputFilename);
+    	ArrayList<String> sentences = new ArrayList<String>();
         
-        getInvalidSentences(5);
- 
-    }   
+    	for (String i : input.split("\\r?\\n")) 
+        	sentences.add(i);
+        ArrayList<String> validSentences = new ArrayList<String>();
+        
+        for (String string : sentences)
+        	if(cyk(string))
+        		validSentences.add(string);
+        writeFile(outputFilename, validSentences);	
+    }
+    
+    private static void decryptInput(String inputFilename,String outputFilename) {
+    	String input = readFile(inputFilename);
+    	ArrayList<String> decryptedLines = new ArrayList<String>();
+        for (String i : input.split("\\r?\\n")) 
+        	decryptedLines.add(Decryptor.decrypt((i)));
+        writeFile(outputFilename,decryptedLines);
+    }
+    
+    private static void encryptInput(String inputFilename,String outputFilename) {
+    	String input = readFile(inputFilename);
+    	ArrayList<String> encryptedLines = new ArrayList<String>();
+        for (String i : input.split("\\r?\\n")) 
+        	encryptedLines.add(Encryptor.encrypt(i));
+        writeFile(outputFilename,encryptedLines);
+    }
+    
+    private static void writeFile(String filename, ArrayList<String> lines) {
+    	try{			
+			Files.write(Paths.get(filename), lines, StandardCharsets.UTF_8);
+		}
+		catch(IOException ioe) {
+			System.err.println("IOException: " + ioe.getMessage());
+		}
+    }
+    
+    
    
-    private static void getValidSentences(String grammar, int numberOfSentences) {
+    private static void getValidSentences(String grammar, int numberOfSentences, String outputFilename) {
     	for (String i : grammar.split("\n")) {
             String[] arr = i.split(" -> ");
             if(productionRules.containsKey(arr[0]))
@@ -47,7 +80,7 @@ public class main {
             	productionRules.put(arr[0], new ArrayList<>(Arrays.asList(arr[1].trim().split("\\|"))));
         }        
         try{
-            FileWriter fw = new FileWriter("example-sentences.txt"); //the true will append the new data
+            FileWriter fw = new FileWriter(outputFilename); //the true will append the new data
             for (int i = 0; i < numberOfSentences; i++) 
             	fw.write(getBottom(nonTerminals.get(0)).replaceAll(" +", " ") +"\n");//appends the string to the file
             fw.close();
@@ -57,10 +90,10 @@ public class main {
         }
     }
     
-    private static void getInvalidSentences(int numberOfSentences) {
+    private static void addInvalidSentences(int numberOfSentences,String inputFilename,String outputFilename) {
     	Random random = new Random();
     	try{
-			List<String> lines = Files.readAllLines(Paths.get("example-sentences.txt"), StandardCharsets.UTF_8);
+			List<String> lines = Files.readAllLines(Paths.get(inputFilename), StandardCharsets.UTF_8);
 			for (int i = 0; i < numberOfSentences; i++) {
 	    		int numberOfWords =random.ints(terminals.size()/4, terminals.size()).findFirst().getAsInt();
 	    		StringBuilder stringBuilder = new StringBuilder();
@@ -69,7 +102,7 @@ public class main {
 				}
 	    		lines.add(random.nextInt(lines.size()), stringBuilder.toString().trim());
 			}
-			Files.write(Paths.get("input.txt"), lines, StandardCharsets.UTF_8);
+			Files.write(Paths.get(outputFilename), lines, StandardCharsets.UTF_8);
 		}
 		catch(IOException ioe) {
 			System.err.println("IOException: " + ioe.getMessage());
@@ -92,7 +125,7 @@ public class main {
     }
     
     
-    private static String readGrammar(String grammar) {
+    private static String readFile(String grammar) {
         StringBuilder contentBuilder = new StringBuilder();
  
         try (Stream<String> stream = Files.lines( Paths.get(grammar), StandardCharsets.UTF_8)) {
