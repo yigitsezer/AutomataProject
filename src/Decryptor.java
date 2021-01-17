@@ -28,7 +28,7 @@ public class Decryptor {
     private static String decrypt1(String str) {
         Pattern p = Pattern.compile("\\b([a-zA-Z0-9])([a-zA-Z0-9]*?)([a-zA-Z0-9])\\b");
         Matcher m = p.matcher(str);
-        return m.replaceAll("$3$2$1").toLowerCase();
+        return m.replaceAll("$3$2$1");
     }
 
     private static String decrypt2(String str) {
