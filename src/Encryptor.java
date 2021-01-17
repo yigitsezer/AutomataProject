@@ -67,7 +67,7 @@ class Encryptor {
     private static String encrypt5(String str) {
         Pattern p = Pattern.compile("([aeiouAEIOU])([aeiouAEIOU])");
         Matcher m = p.matcher(str);
-        return m.replaceAll("$2$1$1$2").toUpperCase();
+        return m.replaceAll("$2$1$1$2");
     }
 
     private static String encrypt6(String str) {

@@ -67,7 +67,7 @@ public class Decryptor {
     private static String decrypt5(String str) {
         Pattern p = Pattern.compile("([aeiouAEIOU])([aeiouAEIOU])\\2\\1");
         Matcher m = p.matcher(str);
-        return m.replaceAll("$2$1").toLowerCase();
+        return m.replaceAll("$2$1");
     }
 
     private static String decrypt6(String str) {
