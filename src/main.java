@@ -95,7 +95,7 @@ public class main {
     	try{
 			List<String> lines = Files.readAllLines(Paths.get(inputFilename), StandardCharsets.UTF_8);
 			for (int i = 0; i < numberOfSentences; i++) {
-	    		int numberOfWords =random.ints(terminals.size()/4, terminals.size()/2).findFirst().getAsInt();
+	    		int numberOfWords =random.nextInt(terminals.size());
 	    		StringBuilder stringBuilder = new StringBuilder();
 	    		for (int j = 0; j < numberOfWords ; j++) {
 					stringBuilder.append(terminals.get(random.nextInt(terminals.size()))).append(" ");
