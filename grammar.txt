@@ -41,7 +41,7 @@
 <prep> -> in|on|at
 <time-or-place> -> morning|noon|afternoon|night|midnight|london bridge|big ben|london eye|oxford street|eastern front|western front
 <place> -> london bridge|big ben|london eye|oxford street|eastern front|western front
-<side> -> enemy|elly|neutral
+<side> -> enemy|ally|neutral
 <unit> -> personnel|tanks|aircrafts
 <encounter-verb> -> spotted|seen|destroyed|eliminated
 <time> -> morning|noon|afternoon|night|midnight
