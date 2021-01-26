@@ -1,4 +1,4 @@
-## readme
+## Description
 The grammar is read from a single text file 'grammar.txt'. To be able to read the grammar from a text file, the grammar should be in a particular form
 
 * every non-terminal should be written inside of ‘< >’
@@ -15,3 +15,7 @@ Example Grammar:
 \<D> -> b\
 \<E> -> c\
 \<F> -> \<A>\<D>
+
+## Executable
+
+Execute AutomataProject.jar with an accaptable grammar.txt in the same directory.
